@@ -3,13 +3,15 @@ package Users;
 import java.util.ArrayList;
 
 //Composite
-public class UserGroups implements UserInterface{
-    private String uniqueID;
-    private ArrayList<UserInterface> group;
+public class UserGroups extends UserBase{
 
     public UserGroups(String id) {
         uniqueID = id;
-        group = new ArrayList<>();
+        followers = new ArrayList<>();
+    }
+
+    public void add(UserGroups userGroup) {
+        followers.add(userGroup);
     }
 
 }
