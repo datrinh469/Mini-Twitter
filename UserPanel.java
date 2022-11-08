@@ -16,6 +16,19 @@ public class UserPanel {
         user.setVisible(true);
     }
 
+    //Apply functions here when buttons are pressed
+    public void followUser() {
+
+    }
+
+    public void postTweet() {
+
+    }
+
+    private void update() {
+
+    }
+
     private void addWidgets() {
         userWidgets[0] = new TextField("User ID");
         userWidgets[0].addWidget(user, 10, 10);

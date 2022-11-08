@@ -3,15 +3,20 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import Widgets.*;
+import Users.*;
 
 public class AdminControlPanel {
     private static final AdminControlPanel adminPanel = new AdminControlPanel();
     private JFrame admin = new JFrame("Admin Control Panel");
     private Widgets[] adminWidgets = new Widgets[10];
+    private UserGroups userRoot;
+    DefaultMutableTreeNode root;
 
     private AdminControlPanel() {
         admin.setSize(600,400);
         admin.setLayout(null);
+        userRoot = new UserGroups("Root");
+        root = new DefaultMutableTreeNode("Root");
         addWidgets();
         admin.setVisible(true);
     }
@@ -20,8 +25,40 @@ public class AdminControlPanel {
         return adminPanel;
     }
 
+    //Apply functions here for when button is pressed
+    public void addUser() {
+
+    }
+
+    public void addGroup() {
+
+    }
+
+    public void openUserView() {
+
+    }
+
+    public void showUserTotal() {
+
+    }
+
+    public void showGroupTotal() {
+
+    }
+
+    public void showMessagesTotal() {
+
+    }
+
+    public void showPositivePercentage() {
+
+    }
+
+    private void update() {
+
+    }
+
     private void addWidgets() {
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
         adminWidgets[0] = new TreeView(root);
         adminWidgets[0].addWidget(admin, 0, 10);
 
