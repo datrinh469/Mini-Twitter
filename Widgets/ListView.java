@@ -14,4 +14,5 @@ public class ListView implements Widgets {
         list.setBounds(x, y, 380, 150);
         panel.add(list);
     }
+
 }

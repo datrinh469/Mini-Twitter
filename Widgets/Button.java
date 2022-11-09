@@ -1,5 +1,7 @@
 package Widgets;
 
+import Panels.AdminControlPanel;
+
 import javax.swing.*;
 
 public class Button implements Widgets {
@@ -13,5 +15,13 @@ public class Button implements Widgets {
     public void addWidget(JFrame panel, int x, int y) {
         button.setBounds(x, y, 180, 50);
         panel.add(button);
+    }
+
+    public JButton getButton() {
+        return button;
+    }
+
+    public void setListener(AdminControlPanel admin) {
+        button.addActionListener(admin);
     }
 }

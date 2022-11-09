@@ -2,7 +2,7 @@ package Users;
 
 import java.util.ArrayList;
 
-public class UserBase {
+public abstract class UserBase {
     String uniqueID;
     ArrayList<UserBase> followers;
 
@@ -10,11 +10,13 @@ public class UserBase {
         followers.add(user);
     }
 
-    public String getUniqueID() {
+    public String toString() {
         return uniqueID;
     }
 
     public ArrayList<UserBase> getFollowers() {
         return followers;
     }
+
+    public abstract boolean isUser();
 }

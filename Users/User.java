@@ -30,4 +30,7 @@ public class User extends UserBase{
     public void addFollowing(User toFollow) {
         following.add(toFollow);
     }
+
+    public boolean isUser() { return true; }
+
 }

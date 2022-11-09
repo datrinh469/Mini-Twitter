@@ -1,3 +1,5 @@
+package Panels;
+
 import Widgets.*;
 
 import javax.swing.*;

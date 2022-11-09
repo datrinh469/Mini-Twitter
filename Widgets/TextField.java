@@ -14,4 +14,8 @@ public class TextField implements Widgets {
         textField.setBounds(x, y, 180, 50);
         panel.add(textField);
     }
+
+    public String getText() {
+        return textField.getText();
+    }
 }
