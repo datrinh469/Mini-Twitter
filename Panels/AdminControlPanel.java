@@ -15,7 +15,7 @@ public class AdminControlPanel implements ActionListener, TreeSelectionListener 
     private static final AdminControlPanel adminPanel = new AdminControlPanel();
     private JFrame admin = new JFrame("Admin Control Panel");
     private Widgets[] adminWidgets = new Widgets[10];
-    private UserGroups userRoot;
+    private static UserGroups userRoot;
     private DefaultMutableTreeNode userRootNode;
     DefaultMutableTreeNode selectedNode;
 
@@ -39,13 +39,16 @@ public class AdminControlPanel implements ActionListener, TreeSelectionListener 
         String groupID = ((TextField)adminWidgets[3]).getText();
 
         if(actionEvent.getSource() == ((Button)adminWidgets[2]).getButton()) { //Add user
-            addUser(userID, selectedNode);
+            if(!UserGroups.checkForExistingUser(userID, userRoot))
+                addUser(userID, selectedNode);
         }
         else if(actionEvent.getSource() == ((Button)adminWidgets[4]).getButton()) { //Add group
-            addGroup(groupID, selectedNode);
+            if(!UserGroups.checkForExistingGroup(groupID, userRoot)) {
+                addGroup(groupID, selectedNode);
+            }
         }
         else if(actionEvent.getSource() == ((Button)adminWidgets[5]).getButton()) { //Open user view
-
+            openUserView(selectedNode);
         }
         else if(actionEvent.getSource() == ((Button)adminWidgets[6]).getButton()) { //Show user total
             showUserTotal();
@@ -105,8 +108,10 @@ public class AdminControlPanel implements ActionListener, TreeSelectionListener 
         }
     }
 
-    public void openUserView() {
-
+    public void openUserView(DefaultMutableTreeNode node) {
+        if(node != null && !node.getAllowsChildren()) {
+            new UserPanel((User) node.getUserObject());
+        }
     }
 
     public void showUserTotal() {
@@ -137,6 +142,10 @@ public class AdminControlPanel implements ActionListener, TreeSelectionListener 
 
     public void showPositivePercentage() {
 
+    }
+
+    public static User getUser(String id) {
+        return UserGroups.getUser(id, userRoot);
     }
 
     private void update(DefaultMutableTreeNode node, DefaultMutableTreeNode newNode) {
@@ -183,5 +192,3 @@ public class AdminControlPanel implements ActionListener, TreeSelectionListener 
         ((Button)adminWidgets[9]).setListener(this);
     }
 }
-
-

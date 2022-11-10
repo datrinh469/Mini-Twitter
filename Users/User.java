@@ -15,9 +15,7 @@ public class User extends UserBase{
         following.add(this);
     }
 
-    public ArrayList<User> getFollowing() {
-        return following;
-    }
+    public ArrayList<User> getFollowing() { return following; }
 
     public ArrayList<String> getNewsFeed() {
         return newsFeed;

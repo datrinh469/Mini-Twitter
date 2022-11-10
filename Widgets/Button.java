@@ -1,6 +1,7 @@
 package Widgets;
 
 import Panels.AdminControlPanel;
+import Panels.UserPanel;
 
 import javax.swing.*;
 
@@ -24,4 +25,6 @@ public class Button implements Widgets {
     public void setListener(AdminControlPanel admin) {
         button.addActionListener(admin);
     }
+
+    public void setListener(UserPanel userPanel) { button.addActionListener(userPanel);}
 }

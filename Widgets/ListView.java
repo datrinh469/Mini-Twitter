@@ -15,4 +15,8 @@ public class ListView implements Widgets {
         panel.add(list);
     }
 
+    public void reload(DefaultListModel<String> data) {
+        list = new JList<>(data);
+    }
+
 }

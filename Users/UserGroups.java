@@ -38,8 +38,46 @@ public class UserGroups extends UserBase{
         return count;
     }
 
-    public int getSize() {
-        return followers.size();
+    public static boolean checkForExistingUser(String id, UserGroups root) {
+        for (UserBase userBase : root.followers) {
+            if(userBase.isUser() && userBase.toString().equals(id)) {
+                return true;
+            }
+            else if(!userBase.isUser()) {
+                if(checkForExistingUser(id, (UserGroups) userBase)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean checkForExistingGroup(String id, UserGroups root) {
+        for (UserBase userBase : root.followers) {
+            if(!userBase.isUser() && userBase.toString().equals(id)) {
+                return true;
+            }
+            else if(!userBase.isUser()) {
+                if(checkForExistingGroup(id, (UserGroups) userBase)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static User getUser(String id, UserGroups root) {
+        for (UserBase userBase : root.followers) {
+            if(userBase.isUser() && userBase.toString().equals(id)) {
+                return (User) userBase;
+            }
+            else if(!userBase.isUser()) {
+                if(checkForExistingUser(id, (UserGroups) userBase)) {
+                    return getUser(id, (UserGroups) userBase);
+                }
+            }
+        }
+        return null;
     }
 
     public boolean isUser() { return false; }
