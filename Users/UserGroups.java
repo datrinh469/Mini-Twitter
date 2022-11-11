@@ -38,6 +38,18 @@ public class UserGroups extends UserBase{
         return count;
     }
 
+    public ArrayList<String> getListOfUserFeed(ArrayList<String> currentList) {
+        for (UserBase userBase : followers) {
+            if(userBase.isUser()) {
+                currentList.addAll(((User)userBase).getUnmodifiedTweet());
+            }
+            else {
+                currentList = (((UserGroups)userBase).getListOfUserFeed(currentList));
+            }
+        }
+        return currentList;
+    }
+
     public static boolean checkForExistingUser(String id, UserGroups root) {
         for (UserBase userBase : root.followers) {
             if(userBase.isUser() && userBase.toString().equals(id)) {

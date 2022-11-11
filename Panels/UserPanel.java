@@ -1,6 +1,7 @@
 package Panels;
 
 import Users.User;
+import Users.UserBase;
 import Widgets.*;
 
 import javax.swing.*;
@@ -11,9 +12,8 @@ import java.awt.event.ActionListener;
 public class UserPanel implements ActionListener {
     private JFrame user;
     private User userData;
-    private Widgets[] userWidgets = new Widgets[6];
+    private Widgets[] userWidgets = new Widgets[5];
     private DefaultListModel<String> currentFollowing = new DefaultListModel<>();
-    private DefaultListModel<String> newsFeed = new DefaultListModel<>();
 
     public UserPanel(User userData) {
         this.userData = userData;
@@ -21,7 +21,6 @@ public class UserPanel implements ActionListener {
         user.setSize(420,450);
         user.setLayout(null);
         currentFollowing.addElement("Current Following");
-        newsFeed.addElement("News Feed");
         addWidgets();
         user.setVisible(true);
     }
@@ -41,12 +40,13 @@ public class UserPanel implements ActionListener {
     //Apply functions here when buttons are pressed
     public void followUser(String id) {
         User followedUser = AdminControlPanel.getUser(id);
-        if(followedUser != null && !userData.toString().equals(id)) {   //Update target user's followers array
+        if(followedUser != null && !userData.toString().equals(id)) {
             for(User followed : userData.getFollowing()) {
                 if(followed.toString().equals(id)) {
                     return;
                 }
             }
+            followedUser.add(userData);
             userData.addFollowing(followedUser);
             currentFollowing.addElement("-  " + id);
             updateFollowers();
@@ -54,21 +54,22 @@ public class UserPanel implements ActionListener {
     }
 
     public void postTweet(String tweet) {
-        userData.addNewsFeed(tweet);
-        newsFeed.addElement("-  " + userData.toString() + ": " + tweet);
-        updateThisFeed();
+        userData.addNewsFeed("-  " + userData.toString() + ": " + tweet);
+        userData.update();
+        userData.addUnmodifiedTweet(tweet);
+        AdminControlPanel.incrementTotalUserMessages();
+        updateAllFeeds("-  " + userData.toString() + ": " + tweet);
     }
 
     private void updateFollowers() {
         ((ListView)userWidgets[2]).reload(currentFollowing);
     }
 
-    private void updateThisFeed() {
-        ((ListView)userWidgets[5]).reload(newsFeed);
-    }
-
-    private void updateAllFeeds() {
-        //checks all other user followers and add to their feed if they follow this user
+    private void updateAllFeeds(String tweet) {
+        for(UserBase user : userData.getFollowers()) {
+            ((User)user).addNewsFeed(tweet);
+            ((User)user).update();
+        }
     }
 
     private void addWidgets() {
@@ -89,7 +90,6 @@ public class UserPanel implements ActionListener {
         userWidgets[4].addWidget(user, 210, 230);
         ((Button)userWidgets[4]).setListener(this);
 
-        userWidgets[5] = new ListView(newsFeed);
-        userWidgets[5].addWidget(user, 10, 290);
+        userData.getDisplayFeed().addWidget(user, 10, 290);
     }
 }

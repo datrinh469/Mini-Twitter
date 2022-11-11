@@ -14,9 +14,7 @@ public abstract class UserBase {
         return uniqueID;
     }
 
-    public ArrayList<UserBase> getFollowers() {
-        return followers;
-    }
+    public ArrayList<UserBase> getFollowers() { return followers; }
 
     public abstract boolean isUser();
 }

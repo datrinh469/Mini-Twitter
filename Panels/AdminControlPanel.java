@@ -5,6 +5,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import Widgets.*;
 import Users.*;
@@ -13,11 +14,13 @@ import Users.*;
 
 public class AdminControlPanel implements ActionListener, TreeSelectionListener {
     private static final AdminControlPanel adminPanel = new AdminControlPanel();
+    private static int totalMessages;
+    private static UserGroups userRoot;
+    private static String[] positiveWords = {"good", "positive", "happy", "great", "excellent", "fantastic", "love"};
     private JFrame admin = new JFrame("Admin Control Panel");
     private Widgets[] adminWidgets = new Widgets[10];
-    private static UserGroups userRoot;
     private DefaultMutableTreeNode userRootNode;
-    DefaultMutableTreeNode selectedNode;
+    private DefaultMutableTreeNode selectedNode;
 
     private AdminControlPanel() {
         admin.setSize(600,400);
@@ -26,6 +29,7 @@ public class AdminControlPanel implements ActionListener, TreeSelectionListener 
         userRootNode = new DefaultMutableTreeNode(userRoot, true);
         addWidgets();
         admin.setVisible(true);
+        totalMessages = 0;
     }
 
     public static AdminControlPanel getAdminControlPanel() {
@@ -57,10 +61,10 @@ public class AdminControlPanel implements ActionListener, TreeSelectionListener 
             showGroupTotal();
         }
         else if(actionEvent.getSource() == ((Button)adminWidgets[8]).getButton()) { //Show messages total
-
+            showMessagesTotal();
         }
         else if(actionEvent.getSource() == ((Button)adminWidgets[9]).getButton()) { //Show positive percentage
-
+            showPositivePercentage();
         }
     }
 
@@ -137,11 +141,58 @@ public class AdminControlPanel implements ActionListener, TreeSelectionListener 
     }
 
     public void showMessagesTotal() {
-
+        JFrame groupTotal = new JFrame("Total Amount of Messages");
+        groupTotal.setSize(300,75);
+        groupTotal.setLayout(null);
+        JTextField field = new JTextField("The Total Number of Messages Currently is " + totalMessages + ".");
+        field.setBounds(0, 0, 300, 75);
+        groupTotal.add(field);
+        groupTotal.setVisible(true);
     }
 
     public void showPositivePercentage() {
+        int numOfPositiveTweets = 0;
+        ArrayList<String> list = new ArrayList<>();
+        userRoot.getListOfUserFeed(list);
 
+        for(String tweet : list) {
+            tweet = tweet.toLowerCase();
+            String[] words = tweet.split("\\s+");
+            for(String word : words) {
+                boolean solved = false;
+                for(String positiveWord : positiveWords) {
+                    if(word.equals(positiveWord)) {
+                        numOfPositiveTweets++;
+                        solved = true;
+                        break;
+                    }
+                }
+                if(solved) {
+                    break;
+                }
+            }
+        }
+        float percentage;
+        if(list.size() == 0) {
+            percentage = 0;
+        }
+        else {
+            percentage = numOfPositiveTweets / (float) list.size();
+            percentage *= 100;
+        }
+
+        JFrame groupTotal = new JFrame("Percent of Positive Tweet Messages");
+        groupTotal.setSize(600,75);
+        groupTotal.setLayout(null);
+        JTextField field = new JTextField("The Total Number of Positive Messages Currently is " + numOfPositiveTweets +
+                " Out of " + list.size() + " Tweets Which Equates to " + (int)percentage + "%.");
+        field.setBounds(0, 0, 600, 75);
+        groupTotal.add(field);
+        groupTotal.setVisible(true);
+    }
+
+    public static void incrementTotalUserMessages() {
+        totalMessages++;
     }
 
     public static User getUser(String id) {
