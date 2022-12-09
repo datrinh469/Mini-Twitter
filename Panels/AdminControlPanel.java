@@ -6,6 +6,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import Widgets.*;
 import Users.*;
@@ -18,7 +19,7 @@ public class AdminControlPanel implements ActionListener, TreeSelectionListener 
     private static UserGroups userRoot;
     private static String[] positiveWords = {"good", "positive", "happy", "great", "excellent", "fantastic", "love"};
     private JFrame admin = new JFrame("Admin Control Panel");
-    private Widgets[] adminWidgets = new Widgets[10];
+    private Widgets[] adminWidgets = new Widgets[12];
     private DefaultMutableTreeNode userRootNode;
     private DefaultMutableTreeNode selectedNode;
 
@@ -66,6 +67,12 @@ public class AdminControlPanel implements ActionListener, TreeSelectionListener 
         else if(actionEvent.getSource() == ((Button)adminWidgets[9]).getButton()) { //Show positive percentage
             showPositivePercentage();
         }
+        else if(actionEvent.getSource() == ((Button)adminWidgets[10]).getButton()) { //Show positive percentage
+            validateID();
+        }
+        else if(actionEvent.getSource() == ((Button)adminWidgets[11]).getButton()) { //Show positive percentage
+            showLastUpdatedUser();
+        }
     }
 
     @Override
@@ -73,7 +80,7 @@ public class AdminControlPanel implements ActionListener, TreeSelectionListener 
         selectedNode = (DefaultMutableTreeNode) (((TreeView)adminWidgets[0]).getTree()).getLastSelectedPathComponent();
     }
 
-    public void addUser(String userID, DefaultMutableTreeNode node) {
+    private void addUser(String userID, DefaultMutableTreeNode node) {
 
         User user = new User(userID);
         DefaultMutableTreeNode userNode = new DefaultMutableTreeNode(user, false);
@@ -93,7 +100,7 @@ public class AdminControlPanel implements ActionListener, TreeSelectionListener 
         }
     }
 
-    public void addGroup(String groupID, DefaultMutableTreeNode node) {
+    private void addGroup(String groupID, DefaultMutableTreeNode node) {
         UserGroups group = new UserGroups(groupID);
         DefaultMutableTreeNode groupNode = new DefaultMutableTreeNode(group, true);
 
@@ -112,13 +119,13 @@ public class AdminControlPanel implements ActionListener, TreeSelectionListener 
         }
     }
 
-    public void openUserView(DefaultMutableTreeNode node) {
+    private void openUserView(DefaultMutableTreeNode node) {
         if(node != null && !node.getAllowsChildren()) {
             new UserPanel((User) node.getUserObject());
         }
     }
 
-    public void showUserTotal() {
+    private void showUserTotal() {
         int userCount = userRoot.getNumOfUsers(0);
         JFrame userTotal = new JFrame("Total Amount of Users");
         userTotal.setSize(300,75);
@@ -129,7 +136,7 @@ public class AdminControlPanel implements ActionListener, TreeSelectionListener 
         userTotal.setVisible(true);
     }
 
-    public void showGroupTotal() {
+    private void showGroupTotal() {
         int groupCount = userRoot.getNumOfGroups(1);
         JFrame groupTotal = new JFrame("Total Amount of Groups");
         groupTotal.setSize(300,75);
@@ -140,7 +147,7 @@ public class AdminControlPanel implements ActionListener, TreeSelectionListener 
         groupTotal.setVisible(true);
     }
 
-    public void showMessagesTotal() {
+    private void showMessagesTotal() {
         JFrame groupTotal = new JFrame("Total Amount of Messages");
         groupTotal.setSize(300,75);
         groupTotal.setLayout(null);
@@ -150,7 +157,7 @@ public class AdminControlPanel implements ActionListener, TreeSelectionListener 
         groupTotal.setVisible(true);
     }
 
-    public void showPositivePercentage() {
+    private void showPositivePercentage() {
         int numOfPositiveTweets = 0;
         ArrayList<String> list = new ArrayList<>();
         userRoot.getListOfUserFeed(list);
@@ -191,11 +198,75 @@ public class AdminControlPanel implements ActionListener, TreeSelectionListener 
         groupTotal.setVisible(true);
     }
 
-    public static void incrementTotalUserMessages() {
+    private void validateID() {
+        ArrayList<String> list = new ArrayList<>();
+        ArrayList<String> resultList = new ArrayList<>();
+        userRoot.getListOfUsers(list);
+
+        for(String name: list) {
+            if (name.contains(" ") && !resultList.contains(name)) {
+                resultList.add(name);
+            } else {
+                if (Collections.frequency(list, name) > 1 && !resultList.contains(name)) {
+                    resultList.add(name);
+                }
+            }
+        }
+
+        JFrame groupTotal = new JFrame("List of Invalid IDs");
+        groupTotal.setSize(600,75);
+        groupTotal.setLayout(null);
+        JTextField field = new JTextField("The Current Invalid IDs are ");
+        for(int i = 0; i < resultList.size(); i++) {
+            String name = resultList.get(i);
+            if(i == resultList.size()-1)
+                field.setText(field.getText() + name + ".");
+            else
+                field.setText(field.getText() + name + ", ");
+        }
+        field.setBounds(0, 0, 600, 75);
+        groupTotal.add(field);
+        groupTotal.setVisible(true);
+    }
+
+    private void showLastUpdatedUser() {
+        long timeCheck = 0;
+        ArrayList<User> list = new ArrayList<>();
+        ArrayList<String> resultList = new ArrayList<>();
+        userRoot.getAllUsers(list);
+
+        for(User user: list) {
+            if(user.getLastUpdateTime() > timeCheck) {
+                resultList.clear();
+                resultList.add(user.toString());
+                timeCheck = user.getLastUpdateTime();
+            }
+            else if(user.getLastUpdateTime() == timeCheck) {
+                resultList.add(user.toString());
+            }
+        }
+
+        JFrame groupTotal = new JFrame("List of Most Recently Updated User");
+        groupTotal.setSize(600,75);
+        groupTotal.setLayout(null);
+        JTextField field = new JTextField("The Most Recently Updated User(s) are ");
+        for(int i = 0; i < resultList.size(); i++) {
+            String name = resultList.get(i);
+            if(i == resultList.size()-1)
+                field.setText(field.getText() + name + ".");
+            else
+                field.setText(field.getText() + name + ", ");
+        }
+        field.setBounds(0, 0, 600, 75);
+        groupTotal.add(field);
+        groupTotal.setVisible(true);
+    }
+
+    static void incrementTotalUserMessages() {
         totalMessages++;
     }
 
-    public static User getUser(String id) {
+    static User getUser(String id) {
         return UserGroups.getUser(id, userRoot);
     }
 
@@ -241,5 +312,13 @@ public class AdminControlPanel implements ActionListener, TreeSelectionListener 
         adminWidgets[9] = new Button("Show Positive Percentage");
         adminWidgets[9].addWidget(admin,400,320);
         ((Button)adminWidgets[9]).setListener(this);
+
+        adminWidgets[10] = new Button("Validate IDs");
+        adminWidgets[10].addWidget(admin,200,200);
+        ((Button)adminWidgets[10]).setListener(this);
+
+        adminWidgets[11] = new Button("Show Last Updated User");
+        adminWidgets[11].addWidget(admin,400,200);
+        ((Button)adminWidgets[11]).setListener(this);
     }
 }

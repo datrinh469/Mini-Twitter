@@ -18,7 +18,7 @@ public class UserPanel implements ActionListener {
     public UserPanel(User userData) {
         this.userData = userData;
         user = new JFrame(userData.toString() + "'s Control Panel");
-        user.setSize(420,450);
+        user.setSize(420,540);
         user.setLayout(null);
         currentFollowing.addElement("Current Following");
         addWidgets();
@@ -54,21 +54,22 @@ public class UserPanel implements ActionListener {
     }
 
     public void postTweet(String tweet) {
+        long newUpdateTime = System.currentTimeMillis();
         userData.addNewsFeed("-  " + userData.toString() + ": " + tweet);
-        userData.update();
+        userData.update(newUpdateTime);
         userData.addUnmodifiedTweet(tweet);
         AdminControlPanel.incrementTotalUserMessages();
-        updateAllFeeds("-  " + userData.toString() + ": " + tweet);
+        updateAllFeeds("-  " + userData.toString() + ": " + tweet, newUpdateTime);
     }
 
     private void updateFollowers() {
         ((ListView)userWidgets[2]).reload(currentFollowing);
     }
 
-    private void updateAllFeeds(String tweet) {
+    private void updateAllFeeds(String tweet, long newUpdateTime) {
         for(UserBase user : userData.getFollowers()) {
             ((User)user).addNewsFeed(tweet);
-            ((User)user).update();
+            ((User)user).update(newUpdateTime);
         }
     }
 
@@ -91,5 +92,7 @@ public class UserPanel implements ActionListener {
         ((Button)userWidgets[4]).setListener(this);
 
         userData.getDisplayFeed().addWidget(user, 10, 290);
+
+        userData.getDisplayTime().addWidget(user, 10, 460);
     }
 }

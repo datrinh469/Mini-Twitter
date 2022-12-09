@@ -8,6 +8,7 @@ public class UserGroups extends UserBase{
     public UserGroups(String id) {
         uniqueID = id;
         followers = new ArrayList<>();
+        creationTime = System.currentTimeMillis();
     }
 
     public void add(UserGroups userGroup) {
@@ -50,6 +51,17 @@ public class UserGroups extends UserBase{
         return currentList;
     }
 
+    public ArrayList<String> getListOfUsers(ArrayList<String> currentList) {
+        for (UserBase userBase : followers) {
+            currentList.add(userBase.toString());
+            if(!userBase.isUser()) {
+                currentList = (((UserGroups)userBase).getListOfUsers(currentList));
+            }
+        }
+        return currentList;
+    }
+
+
     public static boolean checkForExistingUser(String id, UserGroups root) {
         for (UserBase userBase : root.followers) {
             if(userBase.isUser() && userBase.toString().equals(id)) {
@@ -90,6 +102,18 @@ public class UserGroups extends UserBase{
             }
         }
         return null;
+    }
+
+    public ArrayList<User> getAllUsers(ArrayList<User> list) {
+        for (UserBase userBase : followers) {
+            if(userBase.isUser()) {
+                list.add((User)userBase);
+            }
+            else {
+                return ((UserGroups)userBase).getAllUsers(list);
+            }
+        }
+        return list;
     }
 
     public boolean isUser() { return false; }
